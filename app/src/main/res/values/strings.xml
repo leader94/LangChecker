@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">LangChecker</string>
+    <string name="app_name">GramWise</string>
+    <string name="copy_and_exit">Copy And Exit</string>
 </resources>

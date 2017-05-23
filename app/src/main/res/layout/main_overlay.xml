@@ -6,7 +6,7 @@
     android:layout_margin="2dp"
     android:focusable="true"
     android:orientation="vertical"
-    android:background="#4fc3f7">
+    android:background="#eeeeee">
 
     <Button
         android:id="@+id/mo_close_btn"

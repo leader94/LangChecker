@@ -7,18 +7,22 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import bluetowel.com.langchecker.PopupMainActivity;
 import bluetowel.com.langchecker.R;
 import bluetowel.com.langchecker.network.networkUtils;
 import bluetowel.com.langchecker.utils.BasicCallback;
@@ -36,11 +40,15 @@ public class ClipBoardWatcherService extends Service {
 
 
     EditText editText;
-    Button close_btn;
+    ImageButton close_btn;
     ClipboardManager clipboard;
     View myView;
     private ClipboardManager.OnPrimaryClipChangedListener listener = new ClipboardManager.OnPrimaryClipChangedListener() {
         public void onPrimaryClipChanged() {
+//            Intent window = new Intent(getBaseContext(), PopupMainActivity.class);
+//            window.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//            startActivity(window);
+
             doSomeActivity();
         }
     };
@@ -68,60 +76,54 @@ public class ClipBoardWatcherService extends Service {
 //                clipboard.get
 //        Toast.makeText(getBaseContext(),"Copy:\n"+a,Toast.LENGTH_LONG).show();
 
-        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        myView = layoutInflater.inflate(R.layout.main_overlay, null);
+        LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+        myView = layoutInflater.inflate(R.layout.popup_main, null);
 
-        editText = (EditText) myView.findViewById(R.id.mo_edit_text);
-        close_btn = (Button) myView.findViewById(R.id.mo_close_btn);
+        editText = (EditText) myView.findViewById(R.id.pm_et_textbox);
+        close_btn = (ImageButton) myView.findViewById(R.id.pm_ib_close);
 
 
         editText.setText(text);
 
+        DisplayMetrics displayMetrics =   getBaseContext().getResources().getDisplayMetrics();
+        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
+
+
         WindowManager.LayoutParams p = new WindowManager.LayoutParams(
                 // Shrink the window to wrap the content rather than filling the screen
-                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 // Display it on top of other application windows, but only for the current user
-                WindowManager.LayoutParams.TYPE_TOAST,
+                WindowManager.LayoutParams.TYPE_PHONE,
                 // Don't let it grab the input focus
-                0,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 // Make the underlying application window visible through any transparent parts
                 PixelFormat.TRANSLUCENT);
         // p.flags = p.flags & ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
 // Define the position of the window within the screen
-        p.gravity = Gravity.TOP;
+        p.gravity = Gravity.TOP|Gravity.LEFT;
         p.x = 0;
-        p.y = 25;
+        p.y = 50;
+
 
 
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        windowManager.addView(myView, p);
+        windowManager.addView(myView ,p);
+
 
 
         close_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 windowManager.removeView(myView);
+
             }
         });
 
 
-//        myView.setOnTouchListener(new OnSwipeTouchListener(){
-//
-//            public boolean onSwipeRight() {
-//                windowManager.removeView(myView);
-//                return true;
-//            }
-//            public boolean onSwipeLeft() {
-//                windowManager.removeView(myView);
-//                return true;
-//            }
-//
-//
-//        });
-
-        checkForErrors();
+      //  checkForErrors();
     }
 
     private void checkForErrors() {

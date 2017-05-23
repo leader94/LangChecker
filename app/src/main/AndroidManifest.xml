@@ -2,9 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="bluetowel.com.langchecker">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
-
 
     <application
         android:allowBackup="true"
@@ -19,9 +18,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PopupMainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
 
-        <service android:name=".services.ClipBoardWatcherService" android:enabled="true"/>
-
+        <service
+            android:name=".services.ClipBoardWatcherService"
+            android:enabled="true" />
+        <service
+            android:name=".services.PopupService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
