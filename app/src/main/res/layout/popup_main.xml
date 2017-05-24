@@ -40,8 +40,7 @@
         android:id="@+id/pm_et_textbox"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:padding="2dp"
-
+        android:padding="5dp"
         android:gravity="start"
         android:layout_marginRight="0dp"
         android:layout_marginLeft="0dp"

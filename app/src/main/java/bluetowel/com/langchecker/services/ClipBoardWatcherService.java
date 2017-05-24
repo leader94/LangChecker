@@ -10,6 +10,7 @@ import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -47,8 +48,8 @@ public class ClipBoardWatcherService extends Service {
     WindowManager windowManager;
     public String text;
 
-    EditText editText;
-    ImageButton close_btn;
+    public static EditText editText;
+    ImageButton close_btn, refresh;
     ClipboardManager clipboard;
     View myView;
     private ClipboardManager.OnPrimaryClipChangedListener listener = new ClipboardManager.OnPrimaryClipChangedListener() {
@@ -96,11 +97,9 @@ public class ClipBoardWatcherService extends Service {
         context=getApplicationContext();
         LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
         myView = layoutInflater.inflate(R.layout.popup_main, null);
-
         DisplayMetrics displayMetrics = getBaseContext().getResources().getDisplayMetrics();
-        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
-        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-
+//        float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
+//        float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
         WindowManager.LayoutParams p = new WindowManager.LayoutParams(
                 (int)(displayMetrics.widthPixels*.9),
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -108,16 +107,26 @@ public class ClipBoardWatcherService extends Service {
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
         // p.flags = p.flags & ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-
         p.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         p.x = 0;
         p.y = 50;
-
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         windowManager.addView(myView, p);
 
-        close_btn = (ImageButton) myView.findViewById(R.id.pm_ib_close);
 
+        doSetup();
+
+        clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+        text = clipboard.getText().toString();
+        //TODO change this to avoid crash
+        checkForErrors(text);
+    }
+
+    private void doSetup(){
+
+        close_btn = (ImageButton) myView.findViewById(R.id.pm_ib_close);
+        refresh = (ImageButton) myView.findViewById(R.id.pm_ib_refresh);
+        editText = (EditText) myView.findViewById(R.id.pm_et_textbox);
 
         close_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,15 +136,21 @@ public class ClipBoardWatcherService extends Service {
             }
         });
 
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkForErrors(editText.getText().toString());
+            }
+        });
 
-        checkForErrors();
     }
 
-    private void checkForErrors() {
 
-        clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-        text = clipboard.getText().toString();
-        editText = (EditText) myView.findViewById(R.id.pm_et_textbox);
+
+
+    private void checkForErrors(String text) {
+
+
 //        editText.setText(text);
 
         final SpannableString spannableString = new SpannableString(text);
@@ -215,12 +230,8 @@ public class ClipBoardWatcherService extends Service {
     }
 
 
-    public static void openSuggestions(int offset,int length){
-//        LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-//        View myView = layoutInflater.inflate(R.layout.popup_main, null);
-//        PopupWindow popupWindow = new PopupWindow(myView,-2,-2,true);
 
-    }
+
 }
 
 

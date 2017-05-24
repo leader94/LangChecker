@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -44,6 +46,7 @@ public class MyClickableSpan extends ClickableSpan {
     public void updateDrawState(TextPaint ds) {
         super.updateDrawState(ds);
         ds.setColor(Color.RED);
+        ds.setUnderlineText(false);
     }
 
     public MyClickableSpan(JSONObject jsonObject) {
@@ -71,7 +74,7 @@ public class MyClickableSpan extends ClickableSpan {
         PopupWindow popupWindow = new PopupWindow(myView,WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT,true);
 */
 
-        Dialog dialog = new Dialog(ClipBoardWatcherService.context);
+        final Dialog dialog = new Dialog(ClipBoardWatcherService.context);
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_TOAST);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_suggestion);
@@ -95,6 +98,10 @@ public class MyClickableSpan extends ClickableSpan {
             String message = jsonObject.optString("message", "Failed");
             messagetv.setText(message);
 
+            final int offset= jsonObject.optInt("offset");
+            final int length= jsonObject.optInt("length");
+
+
             JSONObject contextJSON = jsonObject.optJSONObject("context");
             String contextString = contextJSON.optString("text");
             int contextOffset = contextJSON.optInt("offset");
@@ -109,7 +116,7 @@ public class MyClickableSpan extends ClickableSpan {
 
 
             //add array to arraylist
-            ArrayList<String> replacements = new ArrayList<>();
+            final ArrayList<String> replacements = new ArrayList<>();
 
             JSONArray repJSONArray = jsonObject.optJSONArray("replacements");
 
@@ -124,15 +131,25 @@ public class MyClickableSpan extends ClickableSpan {
             }
 
 
-//            android.widget.ListAdapter listAdapter = new ListAdapter(ClipBoardWatcherService.context, android.R.layout.simple_list_item_1, replacements);
+            android.widget.ListAdapter listAdapter = new ListAdapter(ClipBoardWatcherService.context, R.layout.suggestion_row, replacements);
 
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ClipBoardWatcherService.context,
-                    R.layout.suggestion_row, replacements);
+//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ClipBoardWatcherService.context,
+//                    R.layout.suggestion_row, replacements);
 
 
-
+            listView.setAdapter(listAdapter);
             dialog.show();
-            listView.setAdapter(adapter);adapter.notifyDataSetChanged();
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    String change= replacements.get(i);
+                    updateEditText(change,offset,length);
+                    dialog.dismiss();
+                }
+            });
+
+
         } catch (Exception e) {
 
             e.printStackTrace();
@@ -140,6 +157,40 @@ public class MyClickableSpan extends ClickableSpan {
 
 
     }
+
+    void updateEditText(String change, int offset, int length){
+//        final Editable editable= ClipBoardWatcherService.editText.getText();
+//        editable.replace(offset,offset+length,change);
+//        SpannableString spannableString = new SpannableString(editable);
+//        spannableString.setSpan(ClickableSpan.class, offset,offset+length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+////        spannableString.setSpan(new ForegroundColorSpan(Color.BLACK), offset,offset+length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+////        spannableString.setSpan(new ClickableSpan() {
+////            @Override
+////            public void onClick(View view) {
+////
+////            }
+////        }, offset, offset + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+//      //  editable.removeSpan(spannableString);
+//
+////        Spannable  spannable= editable;
+////        editable.removeSpan(ClickableSpan.class);
+//        spannableString.removeSpan(ClickableSpan.class);
+////        spannable.removeSpan(spannableString);
+//        ClipBoardWatcherService.editText.setText(spannableString);
+//
+
+        Editable editable= ClipBoardWatcherService.editText.getText();
+        StyleSpanRemover spanRemover = new StyleSpanRemover();
+        spanRemover.RemoveAll(editable,offset,offset+length);
+        editable.replace(offset,offset+length,change);
+//        Spannable spannable = editable;
+
+
+
+        ClipBoardWatcherService.editText.setText(editable);
+
+    }
+
 }
 
 class ListAdapter extends ArrayAdapter<String> {

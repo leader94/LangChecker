@@ -8,7 +8,6 @@
     android:paddingBottom="15sp"
     android:layout_width="fill_parent"
     android:gravity="start"
-
     android:textSize="18sp"
     android:layout_height="fill_parent"
     />
