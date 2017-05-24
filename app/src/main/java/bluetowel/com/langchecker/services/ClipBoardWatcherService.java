@@ -1,31 +1,38 @@
 package bluetowel.com.langchecker.services;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
+import android.widget.PopupWindow;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import bluetowel.com.langchecker.PopupMainActivity;
 import bluetowel.com.langchecker.R;
 import bluetowel.com.langchecker.network.networkUtils;
 import bluetowel.com.langchecker.utils.BasicCallback;
+import bluetowel.com.langchecker.utils.MyClickableSpan;
 import bluetowel.com.langchecker.utils.Utilities;
 
 /**
@@ -35,9 +42,10 @@ import bluetowel.com.langchecker.utils.Utilities;
 public class ClipBoardWatcherService extends Service {
     private static String TAG = "myTag";
 
+    public static Context context;
+    Handler handler;
     WindowManager windowManager;
-    String text;
-
+    public String text;
 
     EditText editText;
     ImageButton close_btn;
@@ -59,59 +67,56 @@ public class ClipBoardWatcherService extends Service {
         return null;
     }
 
-
-    @Override
-    public void onCreate() {
-        ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).addPrimaryClipChangedListener(listener);
-    }
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
     }
 
-    private void doSomeActivity() {
-        clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
-        text = clipboard.getText().toString();
-//                clipboard.get
-//        Toast.makeText(getBaseContext(),"Copy:\n"+a,Toast.LENGTH_LONG).show();
+    private void runOnUiThread(Runnable runnable) {
+        handler.post(runnable);
+    }
 
-        LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+
+    public ClipBoardWatcherService(){
+//        context=getApplicationContext();
+    }
+
+    public   Context returnContext(){
+        return  getBaseContext();
+    }
+
+    @Override
+    public void onCreate() {
+        handler = new Handler();
+        ((ClipboardManager) getSystemService(CLIPBOARD_SERVICE)).addPrimaryClipChangedListener(listener);
+    }
+
+
+    private void doSomeActivity() {
+        context=getApplicationContext();
+        LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
         myView = layoutInflater.inflate(R.layout.popup_main, null);
 
-        editText = (EditText) myView.findViewById(R.id.pm_et_textbox);
-        close_btn = (ImageButton) myView.findViewById(R.id.pm_ib_close);
-
-
-        editText.setText(text);
-
-        DisplayMetrics displayMetrics =   getBaseContext().getResources().getDisplayMetrics();
+        DisplayMetrics displayMetrics = getBaseContext().getResources().getDisplayMetrics();
         float dpHeight = displayMetrics.heightPixels / displayMetrics.density;
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
 
-
         WindowManager.LayoutParams p = new WindowManager.LayoutParams(
-                // Shrink the window to wrap the content rather than filling the screen
+                (int)(displayMetrics.widthPixels*.9),
                 WindowManager.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.WRAP_CONTENT,
-                // Display it on top of other application windows, but only for the current user
-                WindowManager.LayoutParams.TYPE_PHONE,
-                // Don't let it grab the input focus
+                WindowManager.LayoutParams.TYPE_TOAST,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                // Make the underlying application window visible through any transparent parts
                 PixelFormat.TRANSLUCENT);
         // p.flags = p.flags & ~WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
 
-// Define the position of the window within the screen
-        p.gravity = Gravity.TOP|Gravity.LEFT;
+        p.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
         p.x = 0;
         p.y = 50;
 
-
-
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-        windowManager.addView(myView ,p);
+        windowManager.addView(myView, p);
 
+        close_btn = (ImageButton) myView.findViewById(R.id.pm_ib_close);
 
 
         close_btn.setOnClickListener(new View.OnClickListener() {
@@ -123,39 +128,73 @@ public class ClipBoardWatcherService extends Service {
         });
 
 
-      //  checkForErrors();
+        checkForErrors();
     }
 
     private void checkForErrors() {
 
+        clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
+        text = clipboard.getText().toString();
+        editText = (EditText) myView.findViewById(R.id.pm_et_textbox);
+//        editText.setText(text);
+
+        final SpannableString spannableString = new SpannableString(text);
+
+
         BasicCallback callback = new BasicCallback() {
             @Override
             public void callBack(Utilities.CallbackResultCode code, Object data) {
-        if(code== Utilities.CallbackResultCode.SUCCESS){
+                if (code == Utilities.CallbackResultCode.SUCCESS) {
 
-            String jsonData= String.valueOf(data);
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = new JSONObject(jsonData);
-                JSONObject language = jsonObject.optJSONObject("language");
-                JSONArray jsonArray = jsonObject.optJSONArray("matches");
-
-                // fetch length offset etc from mathces 
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                    String jsonData = String.valueOf(data);
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(jsonData);
+                        JSONObject language = jsonObject.optJSONObject("language");
+                        JSONArray jsonArray = jsonObject.optJSONArray("matches");
 
 
-        }else {
-            
-            // // TODO: 5/14/2017  toast failed  
+                        // total errors
+                        int totalErrors = jsonArray.length();
 
-        }
+
+                        for(int i =0;i<jsonArray.length();i++){
+                            JSONObject match = (JSONObject) jsonArray.get(i);
+
+                            int start=match.optInt("offset");
+                            int length  =match.optInt("length");
+                            spannableString.setSpan(new MyClickableSpan(match), start, start+length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        }
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                editText.setText(spannableString);
+                                editText.setMovementMethod(LinkMovementMethod.getInstance());
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
+                    // DONT DO ANYTHING
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),"Connection to Server Failed",Toast.LENGTH_SHORT).show();
+                            close_btn.callOnClick();
+                        }
+                    });
+
+                }
 
             }
         };
 
-        networkUtils.POSTcall(text,null,callback);
+        networkUtils.POSTcall(text, null, callback);
 //        String response=networkUtils.POSTcall(text,null,callback);
 /*
         if(response!=null){
@@ -174,4 +213,14 @@ public class ClipBoardWatcherService extends Service {
 
         }*/
     }
+
+
+    public static void openSuggestions(int offset,int length){
+//        LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+//        View myView = layoutInflater.inflate(R.layout.popup_main, null);
+//        PopupWindow popupWindow = new PopupWindow(myView,-2,-2,true);
+
+    }
 }
+
+

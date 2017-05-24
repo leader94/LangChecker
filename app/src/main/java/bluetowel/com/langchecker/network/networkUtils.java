@@ -27,10 +27,10 @@ public class networkUtils {
     public static final MediaType MEDIA_TYPE_MARKDOWN
             = MediaType.parse("text/x-markdown; charset=utf-8");
     private static final String HTTP_HEADER_JSON = "application/json";
-    private static final String baseURL = "https://languagetool.org/api/v2/check";
-    private static final String baseLocalURL = "http://192.168.0.103:8081/v2/check";
+//    private static final String baseURL = "https://languagetool.org/api/v2/check";
+//private static final String LanguagesURL = "https://languagetool.org/api/v2/languages";
+    private static final String baseLocalURL = "http://192.168.0.101:8081/v2/check";
     private static final String baseLocalLanguagesURL = "http://192.168.0.103:8081/v2/languages";
-    private static final String LanguagesURL = "https://languagetool.org/api/v2/languages";
     private static final String HTTP_HEADER_FORM_URLENCODED = "application/x-www-form-urlencoded";
     private static final OkHttpClient client = new OkHttpClient();
     private static String enabledTAG = "&enabledOnly=false";

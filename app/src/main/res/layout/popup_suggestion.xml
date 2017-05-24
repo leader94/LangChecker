@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rectangle_color_secondary"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/ps_tv_message"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/padding_10dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="possible reason for error"
+        android:paddingLeft="@dimen/padding_10dp"
+        android:paddingRight="@dimen/padding_10dp"
+
+        android:textColor="@color/white"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/ps_tv_incorrect_phrase"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/rectangle_white"
+        android:paddingLeft="5sp"
+        android:paddingRight="5sp"
+        android:paddingTop="15sp"
+        android:paddingBottom="15sp"
+        android:textSize="18sp"
+
+        android:textColor="@color/black" />
+
+    <ListView
+        android:id="@+id/ps_lv_sugg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:divider="@color/black"
+        android:background="@drawable/rectangle_white"
+        android:contentDescription="possible correct suggestions"
+        android:dividerHeight="1dp"
+        android:layout_marginBottom="10dp">
+
+    </ListView>
+
+
+</LinearLayout>

@@ -40,11 +40,13 @@
         android:id="@+id/pm_et_textbox"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:cursorVisible="true"
+        android:padding="2dp"
+
         android:gravity="start"
-        android:layout_marginRight="-3dp"
-        android:layout_marginLeft="-3dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginLeft="0dp"
         android:textColor="@color/black"
+
         android:background="@color/white"
         />
 <LinearLayout
