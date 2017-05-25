@@ -16,9 +16,8 @@
         android:contentDescription="possible reason for error"
         android:paddingLeft="@dimen/padding_10dp"
         android:paddingRight="@dimen/padding_10dp"
-
         android:textColor="@color/white"
-        android:textSize="22sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/ps_tv_incorrect_phrase"
@@ -31,7 +30,7 @@
         android:paddingRight="5sp"
         android:paddingTop="15sp"
         android:paddingBottom="15sp"
-        android:textSize="18sp"
+        android:textSize="16sp"
 
         android:textColor="@color/black" />
 

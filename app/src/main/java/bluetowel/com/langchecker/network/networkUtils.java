@@ -29,8 +29,8 @@ public class networkUtils {
     private static final String HTTP_HEADER_JSON = "application/json";
 //    private static final String baseURL = "https://languagetool.org/api/v2/check";
 //private static final String LanguagesURL = "https://languagetool.org/api/v2/languages";
-    private static final String baseLocalURL = "http://192.168.0.101:8081/v2/check";
-    private static final String baseLocalLanguagesURL = "http://192.168.0.103:8081/v2/languages";
+    private static final String baseLocalURL = "http://192.168.0.150:8081/v2/check";
+    private static final String baseLocalLanguagesURL = "http://192.168.0.150:8081/v2/languages";
     private static final String HTTP_HEADER_FORM_URLENCODED = "application/x-www-form-urlencoded";
     private static final OkHttpClient client = new OkHttpClient();
     private static String enabledTAG = "&enabledOnly=false";
@@ -95,20 +95,7 @@ public class networkUtils {
             public void onResponse(Call call, Response response) throws IOException {
 
                 try {
-//                    String jsonData = response.body().string();
-//                    JSONObject jsonObject = new JSONObject(jsonData);
-//                    String value3 = jsonObject.toString();
-//                    JSONObject language = jsonObject.optJSONObject("language");
-//                    JSONArray jsonArray = jsonObject.optJSONArray("matches");
                     if(response.isSuccessful()) {
-
-                        /*AndroidUtilitie.runOnUIThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.callBack(Utilities.CallbackResultCode.SUCCESS, response.body().string());
-                            }
-                        });*/
-
                         callback.callBack(Utilities.CallbackResultCode.SUCCESS, response.body().string());
                     }
                 } catch (Exception e) {

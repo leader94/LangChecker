@@ -1,11 +1,7 @@
 package bluetowel.com.langchecker.utils;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -15,11 +11,9 @@ import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,9 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import bluetowel.com.langchecker.R;
+import bluetowel.com.langchecker.adapters.SuggestionListAdapter;
 import bluetowel.com.langchecker.services.ClipBoardWatcherService;
 
 /**
@@ -79,13 +73,11 @@ public class MyClickableSpan extends ClickableSpan {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.popup_suggestion);
 
-
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
         DisplayMetrics displayMetrics = ClipBoardWatcherService.context.getResources().getDisplayMetrics();
         lp.width = (int) (displayMetrics.widthPixels * .9);
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-
         lp.gravity = Gravity.CENTER;
         dialog.getWindow().setAttributes(lp);
 
@@ -93,29 +85,30 @@ public class MyClickableSpan extends ClickableSpan {
         TextView incorrectPhrasetv = (TextView) dialog.findViewById(R.id.ps_tv_incorrect_phrase);
         ListView listView = (ListView) dialog.findViewById(R.id.ps_lv_sugg);
 
-
         try {
-            String message = jsonObject.optString("message", "Failed");
-            messagetv.setText(message);
+            String message = jsonObject.optString("message", "failed");
+            if (!message.equalsIgnoreCase("failed")) {
+                messagetv.setText(message);
+            }
 
-            final int offset= jsonObject.optInt("offset");
-            final int length= jsonObject.optInt("length");
-
+            final int offset = jsonObject.optInt("offset");
+            final int length = jsonObject.optInt("length");
 
             JSONObject contextJSON = jsonObject.optJSONObject("context");
             String contextString = contextJSON.optString("text");
             int contextOffset = contextJSON.optInt("offset");
             int contextLength = contextJSON.optInt("length");
 
+            String before = Utilities.getStringBefore(contextString.substring(0, contextOffset));
+            String after = Utilities.getStringAfter(contextString.substring(contextOffset + contextLength, contextString.length()));
+            String myString = before + " " + contextString.substring(contextOffset, contextOffset + contextLength) + after;
 
-            String myString= "..."+contextString.substring(contextOffset,contextOffset+contextLength)+"...";
-            final SpannableString spannableString = new SpannableString(myString);
-            spannableString.setSpan(new ForegroundColorSpan(Color.RED), 3,3+contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+            SpannableString spannableString = new SpannableString(myString);
+            spannableString.setSpan(new ForegroundColorSpan(Color.RED), before.length() + 1, before.length() + 1 + contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             incorrectPhrasetv.setText(spannableString);
 
 
-            //add array to arraylist
+            //add suggestions to arraylist
             final ArrayList<String> replacements = new ArrayList<>();
 
             JSONArray repJSONArray = jsonObject.optJSONArray("replacements");
@@ -131,20 +124,14 @@ public class MyClickableSpan extends ClickableSpan {
             }
 
 
-            android.widget.ListAdapter listAdapter = new ListAdapter(ClipBoardWatcherService.context, R.layout.suggestion_row, replacements);
-
-//            ArrayAdapter<String> adapter = new ArrayAdapter<String>(ClipBoardWatcherService.context,
-//                    R.layout.suggestion_row, replacements);
-
-
-            listView.setAdapter(listAdapter);
+            listView.setAdapter(new SuggestionListAdapter(ClipBoardWatcherService.context, replacements, before, after));
             dialog.show();
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    String change= replacements.get(i);
-                    updateEditText(change,offset,length);
+                    String change = replacements.get(i);
+                    updateEditText(change, offset, length);
                     dialog.dismiss();
                 }
             });
@@ -158,7 +145,8 @@ public class MyClickableSpan extends ClickableSpan {
 
     }
 
-    void updateEditText(String change, int offset, int length){
+
+    void updateEditText(String change, int offset, int length) {
 //        final Editable editable= ClipBoardWatcherService.editText.getText();
 //        editable.replace(offset,offset+length,change);
 //        SpannableString spannableString = new SpannableString(editable);
@@ -178,47 +166,15 @@ public class MyClickableSpan extends ClickableSpan {
 ////        spannable.removeSpan(spannableString);
 //        ClipBoardWatcherService.editText.setText(spannableString);
 //
-
-        Editable editable= ClipBoardWatcherService.editText.getText();
+        Editable editable = ClipBoardWatcherService.editText.getText();
         StyleSpanRemover spanRemover = new StyleSpanRemover();
-        spanRemover.RemoveAll(editable,offset,offset+length);
-        editable.replace(offset,offset+length,change);
+        spanRemover.RemoveAll(editable, offset, offset + length);
+        editable.replace(offset, offset + length, change);
 //        Spannable spannable = editable;
 
-
-
         ClipBoardWatcherService.editText.setText(editable);
-
-    }
-
-}
-
-class ListAdapter extends ArrayAdapter<String> {
-
-    public ListAdapter(@NonNull Context context, @LayoutRes int resource) {
-        super(context, resource);
-    }
-
-
-    public ListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<String> objects) {
-        super(context, resource, objects);
-    }
-
-    @Override
-    public int getCount() {
-        return super.getCount();
-    }
-
-    @Nullable
-    @Override
-    public String getItem(int position) {
-        return super.getItem(position);
-    }
-
-    @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        return super.getView(position, convertView, parent);
-
+        // TODO change this hack
+        ClipBoardWatcherService.refreshBtn.callOnClick();
     }
 }
+
