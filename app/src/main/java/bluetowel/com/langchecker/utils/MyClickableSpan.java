@@ -35,17 +35,27 @@ public class MyClickableSpan extends ClickableSpan {
 //    private int length=-1;
 //
     JSONObject jsonObject;
+    int type;
 
     @Override
     public void updateDrawState(TextPaint ds) {
         super.updateDrawState(ds);
-        ds.setColor(Color.RED);
+        if (type == 0) {
+            ds.setColor(Color.CYAN);
+
+        } else {
+            ds.setColor(Color.RED);
+        }
+
+
+        ds.setFakeBoldText(true);
         ds.setUnderlineText(false);
     }
 
-    public MyClickableSpan(JSONObject jsonObject) {
+    public MyClickableSpan(JSONObject jsonObject, int type) {
 
         this.jsonObject = jsonObject;
+        this.type = type;
 //        this.offset=offset;
 //        this.length =length;
 
@@ -101,41 +111,41 @@ public class MyClickableSpan extends ClickableSpan {
 
             String before = Utilities.getStringBefore(contextString.substring(0, contextOffset));
             String after = Utilities.getStringAfter(contextString.substring(contextOffset + contextLength, contextString.length()));
-            String myString = before + " " + contextString.substring(contextOffset, contextOffset + contextLength) + after;
-
+            String myString = before + contextString.substring(contextOffset, contextOffset + contextLength) + after;
             SpannableString spannableString = new SpannableString(myString);
-            spannableString.setSpan(new ForegroundColorSpan(Color.RED), before.length() + 1, before.length() + 1 + contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new ForegroundColorSpan(Color.RED), before.length() , before.length()  + contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             incorrectPhrasetv.setText(spannableString);
 
+            if (type == 0) {
+                listView.setVisibility(View.GONE);
+            } else {
+                //add suggestions to arraylist
+                final ArrayList<String> replacements = new ArrayList<>();
+                JSONArray repJSONArray = jsonObject.optJSONArray("replacements");
 
-            //add suggestions to arraylist
-            final ArrayList<String> replacements = new ArrayList<>();
-
-            JSONArray repJSONArray = jsonObject.optJSONArray("replacements");
-
-            for (int i = 0; i < repJSONArray.length(); i++) {
-                JSONObject rep = (JSONObject) repJSONArray.opt(i);
-                if (rep != null) {
-                    String value = rep.optString("value");
-                    if (value != null) {
-                        replacements.add(value);
+                for (int i = 0; i < repJSONArray.length(); i++) {
+                    JSONObject rep = (JSONObject) repJSONArray.opt(i);
+                    if (rep != null) {
+                        String value = rep.optString("value");
+                        if (value != null) {
+                            replacements.add(value);
+                        }
                     }
                 }
+
+                listView.setAdapter(new SuggestionListAdapter(ClipBoardWatcherService.context, replacements, before, after));
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        String change = replacements.get(i);
+                        updateEditText(change, offset, length);
+                        dialog.dismiss();
+                    }
+                });
+
             }
 
-
-            listView.setAdapter(new SuggestionListAdapter(ClipBoardWatcherService.context, replacements, before, after));
             dialog.show();
-
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    String change = replacements.get(i);
-                    updateEditText(change, offset, length);
-                    dialog.dismiss();
-                }
-            });
-
 
         } catch (Exception e) {
 

@@ -16,7 +16,7 @@ public class Utilities {
     }
 
 
-    public static String getStringBefore(String text) {
+    static String getStringBefore(String text) {
         int i;
         String before = "";
         int count = 0, reverseStartIndex = 0, reverseEndIndex = text.length() - 1;
@@ -29,13 +29,15 @@ public class Utilities {
                 }
             }
         }
-        for (i = reverseStartIndex; i < reverseEndIndex; i++) {
+        for (i = reverseStartIndex; i <= reverseEndIndex; i++) {
             before = before + text.charAt(i);
         }
         return before;
     }
 
-    public static String getStringAfter(String text) {
+    static String getStringAfter(String text)
+
+    {
         String after = "";
         int i, count = 0, forwardStartIndex = 0, forwardEndIndex = text.length() - 1;
         for (i = 0; i < text.length() - 1; i++) {
@@ -47,9 +49,13 @@ public class Utilities {
                 }
             }
         }
-        for (i = forwardStartIndex; i < forwardEndIndex; i++) {
+        System.out.println(forwardStartIndex);
+        System.out.println(forwardEndIndex);
+
+        for (i = forwardStartIndex; i <= forwardEndIndex; i++) {
             after = after + text.charAt(i);
         }
         return after;
     }
+
 }

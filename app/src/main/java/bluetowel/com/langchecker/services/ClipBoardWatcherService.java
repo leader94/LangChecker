@@ -194,7 +194,27 @@ public class ClipBoardWatcherService extends Service {
 
                             int start = match.optInt("offset");
                             int length = match.optInt("length");
-                            spannableString.setSpan(new MyClickableSpan(match), start, start + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+                            int count=0;
+                            JSONArray repJSONArray = match.optJSONArray("replacements");
+
+                            for (int j = 0; j < repJSONArray.length(); j++) {
+                                JSONObject rep = (JSONObject) repJSONArray.opt(j);
+                                if (rep != null) {
+                                    String value = rep.optString("value");
+                                    if (value != null) {
+                                         count++;
+                                        break;
+                                    }
+                                }
+                            }
+
+
+                            if(count==0){
+                                spannableString.setSpan(new MyClickableSpan(match,count), start, start + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }else {
+                            spannableString.setSpan(new MyClickableSpan(match,count), start, start + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            }
                         }
 
                         runOnUiThread(new Runnable() {
@@ -221,6 +241,7 @@ public class ClipBoardWatcherService extends Service {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            isVisible=false;
                             Toast.makeText(getApplicationContext(), "GramWise: Connection to Server Failed", Toast.LENGTH_SHORT).show();
 //                            closeBtn.callOnClick();
                         }
