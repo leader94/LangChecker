@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -39,7 +38,7 @@ public class MyClickableSpan extends ClickableSpan {
 //
     private JSONObject jsonObject;
     private int type;
-private UniversalVariables.caller caller;
+    private UniversalVariables.caller caller;
 
     @Override
     public void updateDrawState(TextPaint ds) {
@@ -63,7 +62,7 @@ private UniversalVariables.caller caller;
     *  type= 0 : color blue, eg date suggestion
     *  type>0 : color red
     */
-    public MyClickableSpan(JSONObject jsonObject, int type,UniversalVariables.caller caller) {
+    public MyClickableSpan(JSONObject jsonObject, int type, UniversalVariables.caller caller) {
 
         this.jsonObject = jsonObject;
         this.type = type;
@@ -80,16 +79,15 @@ private UniversalVariables.caller caller;
         //TODO call popup class with offset and length values
 //        Log.d("TAG", "on click called "+offset+ "  " +length);
 //        ClipBoardWatcherService.openSuggestions(offset,length);
-        if(caller==UniversalVariables.caller.POPUP){
-        openSuggestions(jsonObject);
-        }else if(caller==UniversalVariables.caller.ACTIVITY){
+        if (caller == UniversalVariables.caller.POPUP) {
+            openSuggestions(jsonObject);
+        } else if (caller == UniversalVariables.caller.ACTIVITY) {
             suggestionsMainActivity(jsonObject);
         }
     }
 
 
-
-    private  void suggestionsMainActivity(JSONObject jsonObject) {
+    private void suggestionsMainActivity(JSONObject jsonObject) {
 
 
         try {
@@ -110,15 +108,14 @@ private UniversalVariables.caller caller;
             String after = Utilities.getStringAfter(contextString.substring(contextOffset + contextLength, contextString.length()));
             String myString = before + contextString.substring(contextOffset, contextOffset + contextLength) + after;
             SpannableString spannableString = new SpannableString(myString);
-            spannableString.setSpan(new ForegroundColorSpan(Color.RED), before.length() , before.length()  + contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
+            spannableString.setSpan(new ForegroundColorSpan(Color.RED), before.length(), before.length() + contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 
             if (type == 0) {
                 MainActivity.gvSuggestions.setVisibility(View.INVISIBLE);
             } else {
                 //add suggestions to arraylist
-                if(MainActivity.gvSuggestions.getVisibility()==View.INVISIBLE ||MainActivity.gvSuggestions.getVisibility()==View.GONE){
+                if (MainActivity.gvSuggestions.getVisibility() == View.INVISIBLE || MainActivity.gvSuggestions.getVisibility() == View.GONE) {
                     MainActivity.gvSuggestions.setVisibility(View.VISIBLE);
                 }
                 final ArrayList<String> replacements = new ArrayList<>();
@@ -134,7 +131,7 @@ private UniversalVariables.caller caller;
                     }
                 }
 
-                MainActivity.gvSuggestions.setAdapter(new SuggestionListAdapterBasic(MainActivity.context,replacements));
+                MainActivity.gvSuggestions.setAdapter(new SuggestionListAdapterBasic(MainActivity.context, replacements));
 
                 MainActivity.gvSuggestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
@@ -200,7 +197,7 @@ private UniversalVariables.caller caller;
             String after = Utilities.getStringAfter(contextString.substring(contextOffset + contextLength, contextString.length()));
             String myString = before + contextString.substring(contextOffset, contextOffset + contextLength) + after;
             SpannableString spannableString = new SpannableString(myString);
-            spannableString.setSpan(new ForegroundColorSpan(Color.RED), before.length() , before.length()  + contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            spannableString.setSpan(new ForegroundColorSpan(Color.RED), before.length(), before.length() + contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             incorrectPhrasetv.setText(spannableString);
 
             if (type == 0) {

@@ -5,8 +5,9 @@ package bluetowel.com.langchecker.utils;
  */
 
 public class UniversalVariables {
-    public static String AppName= "GramWise";
+    public static String AppName = "GramWise";
     public static boolean debug = true;
+
     public static enum caller {
         POPUP, ACTIVITY
     }

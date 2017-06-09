@@ -12,7 +12,6 @@ public class Utilities {
     }
 
 
-
     public static void getScreenSize() {
 
     }

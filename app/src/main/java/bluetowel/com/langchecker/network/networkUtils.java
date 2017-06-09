@@ -1,11 +1,6 @@
 package bluetowel.com.langchecker.network;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.net.HttpURLConnection;
 
 import bluetowel.com.langchecker.utils.BasicCallback;
 import bluetowel.com.langchecker.utils.Utilities;
@@ -31,7 +26,7 @@ public class networkUtils {
 //private static final String LanguagesURL = "https://languagetool.org/api/v2/languages";
 
     private static final String baseLocalURL = "http://192.168.0.150:8081/v2/check";
-//    private static final String baseLocalURL = "http://192.168.0.150:8081/v2/check";
+    //    private static final String baseLocalURL = "http://192.168.0.150:8081/v2/check";
     private static final String baseLocalLanguagesURL = "http://192.168.0.150:8081/v2/languages";
     private static final String HTTP_HEADER_FORM_URLENCODED = "application/x-www-form-urlencoded";
     private static final OkHttpClient client = new OkHttpClient();
@@ -49,7 +44,7 @@ public class networkUtils {
 
     }
 
-    public static void POSTcall(String text,String langCode, final BasicCallback callback ) {
+    public static void POSTcall(String text, String langCode, final BasicCallback callback) {
         text = reformatText(text);
         langCode = "en-US";
         String postBody = "text=" + text + "&language=" + langCode + enabledTAG;
@@ -87,17 +82,17 @@ public class networkUtils {
 
         }
 */
-      client.newCall(request).enqueue(new Callback() {
+        client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.callBack(Utilities.CallbackResultCode.FAIL,null);
+                callback.callBack(Utilities.CallbackResultCode.FAIL, null);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
                 try {
-                    if(response.isSuccessful()) {
+                    if (response.isSuccessful()) {
                         callback.callBack(Utilities.CallbackResultCode.SUCCESS, response.body().string());
                     }
                 } catch (Exception e) {

@@ -26,26 +26,26 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:background="@drawable/rectangle_white"
+        android:paddingBottom="15sp"
         android:paddingLeft="5sp"
         android:paddingRight="5sp"
         android:paddingTop="15sp"
-        android:paddingBottom="15sp"
-        android:textSize="16sp"
+        android:textColor="@color/black"
 
-        android:textColor="@color/black" />
+        android:textSize="16sp" />
 
     <ListView
         android:id="@+id/ps_lv_sugg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:divider="@color/black"
         android:background="@drawable/rectangle_white"
         android:contentDescription="possible correct suggestions"
-        android:dividerHeight="1dp"
-        android:layout_marginBottom="10dp">
+        android:divider="@color/black"
+        android:dividerHeight="1dp">
 
     </ListView>
 

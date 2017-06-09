@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/sr_tv"
-    android:textColor="@color/black"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="start"
+    android:paddingBottom="15sp"
     android:paddingLeft="5sp"
     android:paddingRight="5sp"
     android:paddingTop="15sp"
-    android:paddingBottom="15sp"
-    android:layout_width="fill_parent"
-    android:gravity="start"
-    android:textSize="16sp"
-    android:layout_height="fill_parent"
-    />
+    android:textColor="@color/black"
+    android:textSize="16sp" />

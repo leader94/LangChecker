@@ -62,20 +62,20 @@ public class ClipBoardWatcherService extends Service {
 //            startActivity(window);
 
 
-            String desc="";
+            String desc = "";
             clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = clipboard.getPrimaryClip();
-            if(clip==null || clip.getDescription()==null)
+            if (clip == null || clip.getDescription() == null)
                 return;
 
-            if(clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-                if(clip.getDescription().getLabel()!=null){
-                desc=clip.getDescription().getLabel().toString();
+            if (clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                if (clip.getDescription().getLabel() != null) {
+                    desc = clip.getDescription().getLabel().toString();
                 }
-            if (!isVisible && !desc.equalsIgnoreCase(UniversalVariables.AppName)) {
-                isVisible = true;
-                doSomeActivity();
-            }
+                if (!isVisible && !desc.equalsIgnoreCase(UniversalVariables.AppName)) {
+                    isVisible = true;
+                    doSomeActivity();
+                }
             }
 
         }
@@ -209,7 +209,7 @@ public class ClipBoardWatcherService extends Service {
                             int start = match.optInt("offset");
                             int length = match.optInt("length");
 
-                            int count=0;
+                            int count = 0;
                             JSONArray repJSONArray = match.optJSONArray("replacements");
 
                             for (int j = 0; j < repJSONArray.length(); j++) {
@@ -217,15 +217,14 @@ public class ClipBoardWatcherService extends Service {
                                 if (rep != null) {
                                     String value = rep.optString("value");
                                     if (value != null) {
-                                         count++;
+                                        count++;
                                         break;
                                     }
                                 }
                             }
 
 
-
-                                spannableString.setSpan(new MyClickableSpan(match,count,UniversalVariables.caller.POPUP), start, start + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                            spannableString.setSpan(new MyClickableSpan(match, count, UniversalVariables.caller.POPUP), start, start + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                         }
 
@@ -253,9 +252,9 @@ public class ClipBoardWatcherService extends Service {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            isVisible=false;
-                            if(UniversalVariables.debug){
-                            Toast.makeText(getApplicationContext(), "GramWise: Connection to Server Failed", Toast.LENGTH_SHORT).show();
+                            isVisible = false;
+                            if (UniversalVariables.debug) {
+                                Toast.makeText(getApplicationContext(), "GramWise: Connection to Server Failed", Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -266,9 +265,10 @@ public class ClipBoardWatcherService extends Service {
             }
         };
 
-        text= text.trim();
-        if(!text.isEmpty())
-        { networkUtils.POSTcall(text, null, callback);}
+        text = text.trim();
+        if (!text.isEmpty()) {
+            networkUtils.POSTcall(text, null, callback);
+        }
 //        String response=networkUtils.POSTcall(text,null,callback);
 /*
         if(response!=null){

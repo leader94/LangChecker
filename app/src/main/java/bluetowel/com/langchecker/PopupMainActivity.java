@@ -13,9 +13,10 @@ import android.widget.ImageButton;
  * Created by Pawan on 5/23/2017.
  */
 
-public class PopupMainActivity extends Activity{
+public class PopupMainActivity extends Activity {
 
     ImageButton close_btn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +43,7 @@ public class PopupMainActivity extends Activity{
         // You could also easily used an integer value from the shared preferences to set the percent
         if (height > width) {
 //            getWindow().setLayout((int) (width * .9), (int) (height * .7));
-            getWindow().setLayout((int) (width * .9),WindowManager.LayoutParams.WRAP_CONTENT );
+            getWindow().setLayout((int) (width * .9), WindowManager.LayoutParams.WRAP_CONTENT);
         } else {
             getWindow().setLayout((int) (width * .7), (int) (height * .8));
         }

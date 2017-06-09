@@ -5,8 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
@@ -15,7 +13,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ListPopupWindow;
@@ -46,15 +43,13 @@ public class PopupService extends Service {
     }
 
 
-
-    void doSomeActivity(){
+    void doSomeActivity() {
 
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         chatHead = new ImageView(this);
 
         chatHead.setImageResource(R.drawable.chat_head);
-
 
 
         final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
@@ -78,7 +73,8 @@ public class PopupService extends Service {
                 private float initialTouchX;
                 private float initialTouchY;
 
-                @Override public boolean onTouch(View v, MotionEvent event) {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
                     switch (event.getAction()) {
                         case MotionEvent.ACTION_DOWN:
 
@@ -132,20 +128,19 @@ public class PopupService extends Service {
     }
 
     private void initiatePopupWindow(View anchor) {
-try
-{
+        try {
 
-    Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-    ListPopupWindow popup = new ListPopupWindow(this);
-    popup.setAnchorView(anchor);
-    popup.setWidth((int) (display.getWidth()/(1.5)));
-    popup.show();
+            Display display = ((WindowManager) getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+            ListPopupWindow popup = new ListPopupWindow(this);
+            popup.setAnchorView(anchor);
+            popup.setWidth((int) (display.getWidth() / (1.5)));
+            popup.show();
 
-    LayoutInflater layoutInflater = (LayoutInflater)getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-    View myView = layoutInflater.inflate(R.layout.popup_main, null);
-    PopupWindow popupWindow = new PopupWindow(myView,-2,-2,true);
+            LayoutInflater layoutInflater = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+            View myView = layoutInflater.inflate(R.layout.popup_main, null);
+            PopupWindow popupWindow = new PopupWindow(myView, -2, -2, true);
 //    popupWindow.setContentView(myView);
-    popupWindow.setFocusable(true);
+            popupWindow.setFocusable(true);
 //    popupWindow.setWindowLayoutMode(
 //            ViewGroup.LayoutParams.WRAP_CONTENT,
 //            ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -158,14 +153,14 @@ try
 //    Display display = window.getDefaultDisplay();
 //    Point size = new Point();
 //    display.getSize(size);
-    DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
-    int width = metrics.widthPixels;
-    int height = metrics.heightPixels;
+            DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
+            int width = metrics.widthPixels;
+            int height = metrics.heightPixels;
 //    int width = size.x;
 //    int height = size.y;
 
 
-    // You could also easily used an integer value from the shared preferences to set the percent
+            // You could also easily used an integer value from the shared preferences to set the percent
 //    if (height > width) {
 ////            getWindow().setLayout((int) (width * .9), (int) (height * .7));
 //
@@ -181,27 +176,23 @@ try
 //    popupWindow.setHeight(300);
 
 
-
-
-
 //    popupWindow.setContentView(myView);
 //    popupWindow.setBackgroundDrawable(new ColorDrawable());
 //    popupWindow.showAsDropDown(anchor);
 
-    int location[] = new int[2];
+            int location[] = new int[2];
 
-    // Get the View's(the one that was clicked in the Fragment) location
-    anchor.getLocationOnScreen(location);
+            // Get the View's(the one that was clicked in the Fragment) location
+            anchor.getLocationOnScreen(location);
 
 //    popupWindow.showAtLocation(anchor, Gravity.NO_GRAVITY,
 //            location[0], location[1] + anchor.getHeight());
-popupWindow.showAtLocation(anchor,Gravity.CENTER,0,0);
+            popupWindow.showAtLocation(anchor, Gravity.CENTER, 0, 0);
 
-}
-catch (Exception e){
-    e.printStackTrace();
-    //TODO
-}
+        } catch (Exception e) {
+            e.printStackTrace();
+            //TODO
+        }
 
 
     }

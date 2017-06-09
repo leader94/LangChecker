@@ -17,15 +17,13 @@ import bluetowel.com.langchecker.R;
  * Created by Pawan on 6/9/2017.
  */
 
-    public class SuggestionListAdapterBasic extends BaseAdapter {
+public class SuggestionListAdapterBasic extends BaseAdapter {
 
     ArrayList<String> replacements;
     LayoutInflater inflater = null;
 
 
-
-
-    public SuggestionListAdapterBasic(Context context,ArrayList<String> replacements) {
+    public SuggestionListAdapterBasic(Context context, ArrayList<String> replacements) {
         this.replacements = replacements;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -51,7 +49,7 @@ import bluetowel.com.langchecker.R;
         ViewHolder viewHolder = new ViewHolder();
         View rowView = inflater.inflate(R.layout.suggestion_row, null);
         viewHolder.textView = (TextView) rowView.findViewById(R.id.sr_tv);
-        viewHolder.textView.setBackground(ContextCompat.getDrawable(MainActivity.context,R.drawable.rectangle_curved_secondary_light));
+        viewHolder.textView.setBackground(ContextCompat.getDrawable(MainActivity.context, R.drawable.rectangle_curved_secondary_light));
         viewHolder.textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         String correction = replacements.get(i);
         viewHolder.textView.setText(correction);

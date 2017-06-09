@@ -31,14 +31,13 @@ import bluetowel.com.langchecker.utils.BasicCallback;
 import bluetowel.com.langchecker.utils.MyClickableSpan;
 import bluetowel.com.langchecker.utils.UniversalVariables;
 import bluetowel.com.langchecker.utils.Utilities;
-import me.grantland.widget.AutofitHelper;
 
 public class MainActivity extends AppCompatActivity {
 
     public String text;
     private ClipboardManager clipboard;
     public static EditText editText;
-    private TextView  tvCount, tvCopyAndExit;
+    private TextView tvCount, tvCopyAndExit;
     public static TextView tvCause;
     public static ImageButton refresh;
     public static GridView gvSuggestions;
@@ -56,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_open_keyboard:
-                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(editText,InputMethodManager.SHOW_IMPLICIT);
-                        break;
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+                break;
         }
         return true;
     }
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startService(new Intent(this, ClipBoardWatcherService.class));
-        context=getApplicationContext();
+        context = getApplicationContext();
 
         doSetup();
 
@@ -76,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = clipboard.getPrimaryClip();
 
-        if(clip==null || clip.getDescription()==null)
+        if (clip == null || clip.getDescription() == null)
             return;
         if (clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
 
@@ -97,12 +96,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 v.onTouchEvent(event);
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 return true;
             }
         });
-
 
 
         tvCopyAndExit.setOnClickListener(new View.OnClickListener() {
