@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval"
+    >
+    <!--radious can define in here-->
+
+    <solid
+        android:color="@color/colorSecondary" >
+    </solid>
+
+    <!--for border color use below-->
+    <!--<stroke-->
+        <!--android:width="2dp"-->
+        <!--android:color="#444444"/>-->
+
+</shape>
+<!--<gradient android:startColor="@color/red" android:endColor="@color/red"-->
+    <!--android:angle="270"/>-->
+<!--<size android:width="250dp" android:height="250dp"/>-->

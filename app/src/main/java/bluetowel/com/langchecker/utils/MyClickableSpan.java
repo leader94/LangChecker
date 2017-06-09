@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -22,8 +23,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import bluetowel.com.langchecker.MainActivity;
 import bluetowel.com.langchecker.R;
 import bluetowel.com.langchecker.adapters.SuggestionListAdapter;
+import bluetowel.com.langchecker.adapters.SuggestionListAdapterBasic;
 import bluetowel.com.langchecker.services.ClipBoardWatcherService;
 
 /**
@@ -34,8 +37,9 @@ public class MyClickableSpan extends ClickableSpan {
     //    private int offset=-1;
 //    private int length=-1;
 //
-    JSONObject jsonObject;
-    int type;
+    private JSONObject jsonObject;
+    private int type;
+private UniversalVariables.caller caller;
 
     @Override
     public void updateDrawState(TextPaint ds) {
@@ -52,10 +56,18 @@ public class MyClickableSpan extends ClickableSpan {
         ds.setUnderlineText(false);
     }
 
-    public MyClickableSpan(JSONObject jsonObject, int type) {
+    /*
+    *
+    * param jsonObeject :
+    *  @param type : number of replacemnts available
+    *  type= 0 : color blue, eg date suggestion
+    *  type>0 : color red
+    */
+    public MyClickableSpan(JSONObject jsonObject, int type,UniversalVariables.caller caller) {
 
         this.jsonObject = jsonObject;
         this.type = type;
+        this.caller = caller;
 //        this.offset=offset;
 //        this.length =length;
 
@@ -68,7 +80,82 @@ public class MyClickableSpan extends ClickableSpan {
         //TODO call popup class with offset and length values
 //        Log.d("TAG", "on click called "+offset+ "  " +length);
 //        ClipBoardWatcherService.openSuggestions(offset,length);
+        if(caller==UniversalVariables.caller.POPUP){
         openSuggestions(jsonObject);
+        }else if(caller==UniversalVariables.caller.ACTIVITY){
+            suggestionsMainActivity(jsonObject);
+        }
+    }
+
+
+
+    private  void suggestionsMainActivity(JSONObject jsonObject) {
+
+
+        try {
+            String message = jsonObject.optString("message", "failed");
+            if (!message.equalsIgnoreCase("failed")) {
+                MainActivity.tvCause.setText(message);
+            }
+
+            final int offset = jsonObject.optInt("offset");
+            final int length = jsonObject.optInt("length");
+
+            JSONObject contextJSON = jsonObject.optJSONObject("context");
+            String contextString = contextJSON.optString("text");
+            int contextOffset = contextJSON.optInt("offset");
+            int contextLength = contextJSON.optInt("length");
+
+            String before = Utilities.getStringBefore(contextString.substring(0, contextOffset));
+            String after = Utilities.getStringAfter(contextString.substring(contextOffset + contextLength, contextString.length()));
+            String myString = before + contextString.substring(contextOffset, contextOffset + contextLength) + after;
+            SpannableString spannableString = new SpannableString(myString);
+            spannableString.setSpan(new ForegroundColorSpan(Color.RED), before.length() , before.length()  + contextLength, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+
+
+            if (type == 0) {
+                MainActivity.gvSuggestions.setVisibility(View.INVISIBLE);
+            } else {
+                //add suggestions to arraylist
+                if(MainActivity.gvSuggestions.getVisibility()==View.INVISIBLE ||MainActivity.gvSuggestions.getVisibility()==View.GONE){
+                    MainActivity.gvSuggestions.setVisibility(View.VISIBLE);
+                }
+                final ArrayList<String> replacements = new ArrayList<>();
+                JSONArray repJSONArray = jsonObject.optJSONArray("replacements");
+
+                for (int i = 0; i < repJSONArray.length(); i++) {
+                    JSONObject rep = (JSONObject) repJSONArray.opt(i);
+                    if (rep != null) {
+                        String value = rep.optString("value");
+                        if (value != null) {
+                            replacements.add(value);
+                        }
+                    }
+                }
+
+                MainActivity.gvSuggestions.setAdapter(new SuggestionListAdapterBasic(MainActivity.context,replacements));
+
+                MainActivity.gvSuggestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        String change = replacements.get(i);
+                        Editable editable = MainActivity.editText.getText();
+                        StyleSpanRemover spanRemover = new StyleSpanRemover();
+                        spanRemover.RemoveAll(editable, offset, offset + length);
+                        editable.replace(offset, offset + length, change);
+                        MainActivity.editText.setText(editable);
+                        MainActivity.refresh.callOnClick();
+
+                        MainActivity.gvSuggestions.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
     }
 
     protected void openSuggestions(JSONObject jsonObject) {
@@ -118,6 +205,7 @@ public class MyClickableSpan extends ClickableSpan {
 
             if (type == 0) {
                 listView.setVisibility(View.GONE);
+                incorrectPhrasetv.setVisibility(View.GONE);
             } else {
                 //add suggestions to arraylist
                 final ArrayList<String> replacements = new ArrayList<>();

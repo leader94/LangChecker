@@ -1,10 +1,7 @@
 package bluetowel.com.langchecker.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,28 +10,23 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import bluetowel.com.langchecker.MainActivity;
 import bluetowel.com.langchecker.R;
 
 /**
- * Created by Pawan on 5/25/2017.
+ * Created by Pawan on 6/9/2017.
  */
 
-public class SuggestionListAdapter extends BaseAdapter {
+    public class SuggestionListAdapterBasic extends BaseAdapter {
 
     ArrayList<String> replacements;
-    String before, after;
-    Context context;
     LayoutInflater inflater = null;
 
-    class ViewHolder {
-        TextView textView;
-    }
 
-    public SuggestionListAdapter(Context context, ArrayList<String> replacements, String before, String after) {
-        this.context = context;
+
+
+    public SuggestionListAdapterBasic(Context context,ArrayList<String> replacements) {
         this.replacements = replacements;
-        this.before = before;
-        this.after = after;
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -55,18 +47,18 @@ public class SuggestionListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-//        if(view==null)
-//        {
-        //TODO create view
-//        }else
+
         ViewHolder viewHolder = new ViewHolder();
         View rowView = inflater.inflate(R.layout.suggestion_row, null);
         viewHolder.textView = (TextView) rowView.findViewById(R.id.sr_tv);
+        viewHolder.textView.setBackground(ContextCompat.getDrawable(MainActivity.context,R.drawable.rectangle_curved_secondary_light));
+        viewHolder.textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
         String correction = replacements.get(i);
-        String myString = before + " " + correction + after;
-        SpannableString spannableString = new SpannableString(myString);
-        spannableString.setSpan(new ForegroundColorSpan(Color.GREEN), before.length() + 1, before.length() + 1 + correction.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        viewHolder.textView.setText(spannableString);
+        viewHolder.textView.setText(correction);
         return rowView;
+    }
+
+    class ViewHolder {
+        TextView textView;
     }
 }

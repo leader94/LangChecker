@@ -6,9 +6,11 @@ package bluetowel.com.langchecker.utils;
 
 public class Utilities {
 
+
     public static enum CallbackResultCode {
         FAIL, SUCCESS
     }
+
 
 
     public static void getScreenSize() {

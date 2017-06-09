@@ -30,7 +30,7 @@ public class networkUtils {
 //    private static final String baseURL = "https://languagetool.org/api/v2/check";
 //private static final String LanguagesURL = "https://languagetool.org/api/v2/languages";
 
-    private static final String baseLocalURL = "http://103.216.95.192:8081/v2/check";
+    private static final String baseLocalURL = "http://192.168.0.150:8081/v2/check";
 //    private static final String baseLocalURL = "http://192.168.0.150:8081/v2/check";
     private static final String baseLocalLanguagesURL = "http://192.168.0.150:8081/v2/languages";
     private static final String HTTP_HEADER_FORM_URLENCODED = "application/x-www-form-urlencoded";

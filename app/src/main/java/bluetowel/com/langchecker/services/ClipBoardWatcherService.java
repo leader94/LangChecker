@@ -4,6 +4,7 @@ package bluetowel.com.langchecker.services;
 
 import android.app.Service;
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import bluetowel.com.langchecker.R;
 import bluetowel.com.langchecker.network.networkUtils;
 import bluetowel.com.langchecker.utils.BasicCallback;
 import bluetowel.com.langchecker.utils.MyClickableSpan;
+import bluetowel.com.langchecker.utils.UniversalVariables;
 import bluetowel.com.langchecker.utils.Utilities;
 
 /**
@@ -40,6 +42,7 @@ import bluetowel.com.langchecker.utils.Utilities;
 
 public class ClipBoardWatcherService extends Service {
     private static String TAG = "myTag";
+
 
     private boolean isVisible = false;
     public static Context context;
@@ -58,10 +61,23 @@ public class ClipBoardWatcherService extends Service {
 //            window.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            startActivity(window);
 
-            if (!isVisible) {
+
+            String desc="";
+            clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = clipboard.getPrimaryClip();
+            if(clip==null || clip.getDescription()==null)
+                return;
+
+            if(clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
+                if(clip.getDescription().getLabel()!=null){
+                desc=clip.getDescription().getLabel().toString();
+                }
+            if (!isVisible && !desc.equalsIgnoreCase(UniversalVariables.AppName)) {
                 isVisible = true;
                 doSomeActivity();
             }
+            }
+
         }
     };
 
@@ -118,9 +134,7 @@ public class ClipBoardWatcherService extends Service {
 
         doSetup();
 
-        clipboard = (ClipboardManager) this.getSystemService(Context.CLIPBOARD_SERVICE);
         text = clipboard.getText().toString();
-        //TODO change this to avoid crash
         checkForErrors(text);
     }
 
@@ -160,7 +174,7 @@ public class ClipBoardWatcherService extends Service {
             @Override
             public void onClick(View view) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("GramWise Corrected Text", editText.getText().toString());
+                ClipData clip = ClipData.newPlainText(UniversalVariables.AppName, editText.getText().toString());
                 clipboard.setPrimaryClip(clip);
                 closeBtn.callOnClick();
             }
@@ -210,11 +224,9 @@ public class ClipBoardWatcherService extends Service {
                             }
 
 
-                            if(count==0){
-                                spannableString.setSpan(new MyClickableSpan(match,count), start, start + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            }else {
-                            spannableString.setSpan(new MyClickableSpan(match,count), start, start + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            }
+
+                                spannableString.setSpan(new MyClickableSpan(match,count,UniversalVariables.caller.POPUP), start, start + length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
                         }
 
                         runOnUiThread(new Runnable() {
@@ -242,8 +254,10 @@ public class ClipBoardWatcherService extends Service {
                         @Override
                         public void run() {
                             isVisible=false;
+                            if(UniversalVariables.debug){
                             Toast.makeText(getApplicationContext(), "GramWise: Connection to Server Failed", Toast.LENGTH_SHORT).show();
-//                            closeBtn.callOnClick();
+                            }
+
                         }
                     });
 
@@ -252,7 +266,9 @@ public class ClipBoardWatcherService extends Service {
             }
         };
 
-        networkUtils.POSTcall(text, null, callback);
+        text= text.trim();
+        if(!text.isEmpty())
+        { networkUtils.POSTcall(text, null, callback);}
 //        String response=networkUtils.POSTcall(text,null,callback);
 /*
         if(response!=null){
