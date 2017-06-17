@@ -1,8 +1,14 @@
 package bluetowel.com.langchecker.network;
 
-import java.io.IOException;
+import android.content.SharedPreferences;
+import android.provider.Settings;
 
+import java.io.IOException;
+import java.net.URL;
+
+import bluetowel.com.langchecker.MainActivity;
 import bluetowel.com.langchecker.utils.BasicCallback;
+import bluetowel.com.langchecker.utils.UniversalVariables;
 import bluetowel.com.langchecker.utils.Utilities;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -25,12 +31,17 @@ public class networkUtils {
 //    private static final String baseURL = "https://languagetool.org/api/v2/check";
 //private static final String LanguagesURL = "https://languagetool.org/api/v2/languages";
 
-    private static final String baseLocalURL = "http://192.168.0.150:8081/v2/check";
-    //    private static final String baseLocalURL = "http://192.168.0.150:8081/v2/check";
+//    private static final String baseLocalURL = "http://103.216.93.193:8081/v2/check";
+    private static String textCheckURL= "/v2/check";
+    private static String defaultPort = "8081";
+    private static String HTTP = "http://";
+    private static  String baseLocalURL = "http://192.168.0.150:8081/v2/check";
     private static final String baseLocalLanguagesURL = "http://192.168.0.150:8081/v2/languages";
     private static final String HTTP_HEADER_FORM_URLENCODED = "application/x-www-form-urlencoded";
     private static final OkHttpClient client = new OkHttpClient();
     private static String enabledTAG = "&enabledOnly=false";
+
+
 
     private static String reformatText(String text) {
         return text.replace(" ", "%20");
@@ -45,62 +56,93 @@ public class networkUtils {
     }
 
     public static void POSTcall(String text, String langCode, final BasicCallback callback) {
-        text = reformatText(text);
-        langCode = "en-US";
-        String postBody = "text=" + text + "&language=" + langCode + enabledTAG;
+        try {
+            text = reformatText(text);
+            langCode = "en-US";
+            String postBody = "text=" + text + "&language=" + langCode + enabledTAG;
 
-        RequestBody body = RequestBody.create(MEDIA_TYPE_MARKDOWN, postBody);
+            RequestBody body = RequestBody.create(MEDIA_TYPE_MARKDOWN, postBody);
+
+
+            String url;
+            SharedPreferences settings = MainActivity.context.getSharedPreferences(MainActivity.PREFS_NAME, 0);
+            String server = settings.getString(UniversalVariables.server, UniversalVariables.notSet);
+
+            if (!server.equalsIgnoreCase(UniversalVariables.notSet)) {
+                String port = settings.getString(UniversalVariables.portNumber, UniversalVariables.notSet);
+                if (port.equalsIgnoreCase(UniversalVariables.notSet)) {
+                    url =HTTP+ server + ":" + defaultPort + textCheckURL;
+                } else {
+                    url = HTTP+ server + ":" + port + textCheckURL;
+                }
+            } else {
+                url = baseLocalURL;
+            }
+
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .header("Host", "localhost:8081")
+                    .addHeader("Content-Type", HTTP_HEADER_FORM_URLENCODED)
+                    .addHeader("Referer", "Android-Device")
+                    .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                    .addHeader("Accept-Language", "en-US,en;q=0.5")
+                    .addHeader("Accept-Encoding", "gzip, deflate, br")
+                    .addHeader("Connection", "keep-alive")
+                    .post(body)
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    callback.callBack(Utilities.CallbackResultCode.FAIL, null);
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+
+                    try {
+                        if (response.isSuccessful()) {
+                            callback.callBack(Utilities.CallbackResultCode.SUCCESS, response.body().string());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+    //TODO correct this ping setup
+    public static boolean checkNetworkConnectivity(){
+
+        final boolean flag=true;
         Request request = new Request.Builder()
-                .url(baseLocalURL)
-                .header("Host", "localhost:8081")
-                .addHeader("Content-Type", HTTP_HEADER_FORM_URLENCODED)
-                .addHeader("Referer", "Android-Device")
-                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                .addHeader("Accept-Language", "en-US,en;q=0.5")
-                .addHeader("Accept-Encoding", "gzip, deflate, br")
-                .addHeader("Connection", "keep-alive")
-                .post(body)
+                .url(baseLocalLanguagesURL)
                 .build();
 
-        /*final Call call = client.newCall(request);
-        Response response;
-        try {
-            response = call.execute();
-            if (response.isSuccessful()) {
-                String data = response.body().string();
-                response.body().close();
-                return data;
-            } else {
-                if (response.code() == HttpURLConnection.HTTP_ENTITY_TOO_LARGE) {
-                    response.body().close();
-                    return new JSONObject().put("code", HttpURLConnection.HTTP_ENTITY_TOO_LARGE).put("message", "Request data is too large, Try again.").toString();
-                }
-                response.body().close();
-            }
 
-        } catch (Exception e) {
-
-        }
-*/
         client.newCall(request).enqueue(new Callback() {
+
             @Override
             public void onFailure(Call call, IOException e) {
-                callback.callBack(Utilities.CallbackResultCode.FAIL, null);
+//                flag = false;
+
             }
+
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
 
-                try {
-                    if (response.isSuccessful()) {
-                        callback.callBack(Utilities.CallbackResultCode.SUCCESS, response.body().string());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+//                flag = true;
 
             }
         });
-
+        return flag;
     }
 }

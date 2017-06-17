@@ -1,4 +1,39 @@
 <resources>
     <string name="app_name">GramWise</string>
     <string name="copy_and_exit">Copy And Exit</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string-array name="drawerTitles">
+        <item>Home</item>
+        <item>Set Language</item>
+        <item>Set Server</item>
+        <item>Settings</item>
+    </string-array>
+
+    <string-array name="supportedLanguages">
+        <item>Catalan</item>
+        <item>Catalan (Valencian)</item>
+        <item>English</item>
+        <item>English (Australian)</item>
+        <item>English (Canadian)</item>
+        <item>English (GB)</item>
+        <item>English (New Zealand)</item>
+        <item>English (South African)</item>
+        <item>English (US)</item>
+        <item>German</item>
+        <item>German (Austria)</item>
+        <item>German (Germany)</item>
+        <item>German (Swiss)</item>
+        <item>Portuguese</item>
+        <item>Portuguese (Brazil)</item>
+        <item>Portuguese (Portugal)</item>
+        <item>Russian</item>
+        <item>Ukrainian</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

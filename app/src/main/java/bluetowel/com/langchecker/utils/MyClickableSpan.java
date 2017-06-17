@@ -26,6 +26,7 @@ import bluetowel.com.langchecker.MainActivity;
 import bluetowel.com.langchecker.R;
 import bluetowel.com.langchecker.adapters.SuggestionListAdapter;
 import bluetowel.com.langchecker.adapters.SuggestionListAdapterBasic;
+import bluetowel.com.langchecker.fragment.MainFragment;
 import bluetowel.com.langchecker.services.ClipBoardWatcherService;
 
 /**
@@ -93,7 +94,7 @@ public class MyClickableSpan extends ClickableSpan {
         try {
             String message = jsonObject.optString("message", "failed");
             if (!message.equalsIgnoreCase("failed")) {
-                MainActivity.tvCause.setText(message);
+                MainFragment.tvCause.setText(message);
             }
 
             final int offset = jsonObject.optInt("offset");
@@ -112,11 +113,11 @@ public class MyClickableSpan extends ClickableSpan {
 
 
             if (type == 0) {
-                MainActivity.gvSuggestions.setVisibility(View.INVISIBLE);
+                MainFragment.gvSuggestions.setVisibility(View.INVISIBLE);
             } else {
                 //add suggestions to arraylist
-                if (MainActivity.gvSuggestions.getVisibility() == View.INVISIBLE || MainActivity.gvSuggestions.getVisibility() == View.GONE) {
-                    MainActivity.gvSuggestions.setVisibility(View.VISIBLE);
+                if (MainFragment.gvSuggestions.getVisibility() == View.INVISIBLE || MainFragment.gvSuggestions.getVisibility() == View.GONE) {
+                    MainFragment.gvSuggestions.setVisibility(View.VISIBLE);
                 }
                 final ArrayList<String> replacements = new ArrayList<>();
                 JSONArray repJSONArray = jsonObject.optJSONArray("replacements");
@@ -131,20 +132,20 @@ public class MyClickableSpan extends ClickableSpan {
                     }
                 }
 
-                MainActivity.gvSuggestions.setAdapter(new SuggestionListAdapterBasic(MainActivity.context, replacements));
+                MainFragment.gvSuggestions.setAdapter(new SuggestionListAdapterBasic(MainActivity.context, replacements));
 
-                MainActivity.gvSuggestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                MainFragment.gvSuggestions.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         String change = replacements.get(i);
-                        Editable editable = MainActivity.editText.getText();
+                        Editable editable = MainFragment.editText.getText();
                         StyleSpanRemover spanRemover = new StyleSpanRemover();
                         spanRemover.RemoveAll(editable, offset, offset + length);
                         editable.replace(offset, offset + length, change);
-                        MainActivity.editText.setText(editable);
-                        MainActivity.refresh.callOnClick();
+                        MainFragment.editText.setText(editable);
+                        MainFragment.refresh.callOnClick();
 
-                        MainActivity.gvSuggestions.setVisibility(View.INVISIBLE);
+                        MainFragment.gvSuggestions.setVisibility(View.INVISIBLE);
                     }
                 });
             }

@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_fragment_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="bluetowel.com.langchecker.fragment.MainFragment">
+
+    <EditText
+        android:id="@+id/am_et"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:background="@color/white"
+        android:cursorVisible="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:gravity="start"
+        android:inputType="textNoSuggestions|textMultiLine"
+        android:padding="5dp"
+        android:scrollHorizontally="false"
+        android:textColor="@color/black"
+        android:textCursorDrawable="@drawable/color_black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/am_tv_cause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/am_et"
+        android:layout_marginTop="@dimen/margin_16dp"
+        android:layout_toLeftOf="@+id/am_tv_count"
+        android:maxLines="3"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/am_tv_count"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/am_et"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/circle_color_secondary"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:visibility="invisible" />
+
+    <GridView
+        android:id="@+id/am_gv_suggestions"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_above="@+id/am_ll_botton_panel"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:background="@drawable/rectangle_curved_white"
+        android:columnWidth="120dp"
+        android:horizontalSpacing="1dp"
+        android:minWidth="60dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="3dp"
+        android:visibility="invisible" />
+
+    <LinearLayout
+        android:id="@+id/am_ll_botton_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/rectangle_color_secondary"
+        android:weightSum="1">
+
+        <TextView
+            android:id="@+id/am_tv_copy_and_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight=".82"
+            android:background="@drawable/rectangle_color_secondary"
+            android:gravity="center"
+            android:text="@string/copy_and_exit"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/black" />
+
+        <ImageButton
+            android:id="@+id/am_ib_refresh"
+            android:layout_width="22dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="right|center"
+            android:layout_weight=".18"
+            android:background="@drawable/ic_refresh_black_48dp"
+            android:padding="10dp"
+            android:scaleType="centerInside" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

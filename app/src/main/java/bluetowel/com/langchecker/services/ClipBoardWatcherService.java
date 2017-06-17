@@ -8,6 +8,7 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
@@ -18,8 +19,10 @@ import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -29,6 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import bluetowel.com.langchecker.MainActivity;
 import bluetowel.com.langchecker.R;
 import bluetowel.com.langchecker.network.networkUtils;
 import bluetowel.com.langchecker.utils.BasicCallback;
@@ -44,6 +48,9 @@ public class ClipBoardWatcherService extends Service {
     private static String TAG = "myTag";
 
 
+
+
+
     private boolean isVisible = false;
     public static Context context;
     private Handler handler;
@@ -51,7 +58,7 @@ public class ClipBoardWatcherService extends Service {
     public String text;
     private TextView copyAndExitBtn;
     public static EditText editText;
-    public static ImageButton closeBtn, refreshBtn;
+    public static ImageButton closeBtn, refreshBtn,keyboardBtn;
     private ClipboardManager clipboard;
     private View myView;
     private WindowManager.LayoutParams popupLayoutParams;
@@ -60,7 +67,9 @@ public class ClipBoardWatcherService extends Service {
 //            Intent window = new Intent(getBaseContext(), PopupMainActivity.class);
 //            window.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //            startActivity(window);
-
+            SharedPreferences settings = getSharedPreferences(MainActivity.PREFS_NAME,0);
+            boolean showPopup = settings.getBoolean("showPopup", true);
+            if(showPopup==false)return;
 
             String desc = "";
             clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -144,6 +153,7 @@ public class ClipBoardWatcherService extends Service {
         refreshBtn = (ImageButton) myView.findViewById(R.id.pm_ib_refresh);
         editText = (EditText) myView.findViewById(R.id.pm_et_textbox);
         copyAndExitBtn = (TextView) myView.findViewById(R.id.pm_tv_copy_and_exit);
+        keyboardBtn = (ImageButton)myView.findViewById(R.id.pm_ib_keyboard);
 
 //        editText.clearFocus();
 //        editText.requestFocus();
@@ -163,6 +173,25 @@ public class ClipBoardWatcherService extends Service {
             }
         });
 
+
+        editText.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+           // to stop opening of keyboard automatically
+                v.onTouchEvent(event);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                return true;
+            }
+        });
+
+        keyboardBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        });
         refreshBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
