@@ -81,7 +81,7 @@ public class MainFragment extends Fragment {
         ClipData clip = clipboard.getPrimaryClip();
 
         if (networkUtils.checkNetworkConnectivity()) {
-            if (clip != null && clip.getDescription() != null && clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) || clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML)) {
+            if ((clip != null) && (clip.getDescription() != null && clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN) || clip.getDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_HTML))) {
                 text = clipboard.getText().toString();
                 checkForErrors(text);
             } else {
